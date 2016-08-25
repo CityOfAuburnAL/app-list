@@ -1,0 +1,33 @@
+{
+  "name": "app-list",
+  "homepage": "https://github.com/CityOfAuburnAL",
+  "authors": [
+    "Chris Griffin <chris.sgriffin@gmail.com>"
+  ],
+  "description": "Styles a set of, optionally selectable, elements",
+  "main": "app-list.html",
+  "keywords": [
+    "web-components",
+    "polymer",
+    "iron-selector",
+    "app",
+    "list"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CityOfAuburnAl/app-list.git"
+  },
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.6.0",
+    "iron-selector": "PolymerElements/iron-selector#^1.5.2"
+  },
+  "devDependencies": {
+    "web-component-tester": "*"
+  }
+}

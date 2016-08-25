@@ -1,0 +1,129 @@
+﻿<link rel="import" href="../polymer/polymer.html" />
+<link rel="import" href="../iron-selector/iron-selector.html" />
+
+<dom-module id="app-list">
+    <template>
+        <style>
+            :host {
+                display: block;
+                position: relative;
+            }
+            section ::content iron-selector,
+            section ::content [app-list-item] {
+                background: #FFF;
+                cursor: default;
+                display: block;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                -webkit-user-select: none;
+                user-select: none;
+            }
+
+            section[expandable] ::content [app-list-item] {
+                width: calc(100% + 1rem);
+	            margin-left: -0.5rem;
+                position: relative;
+                will-change: width,margin;
+            }
+
+                section[selectable] ::content [app-list-item]::before {
+                    bottom: 0;
+                    box-shadow: 0 -1px 0 #e5e5e5,0 0 2px rgba(0,0,0,.12),0 2px 4px rgba(0,0,0,.24);
+                    content: '';
+                    display: block;
+                    left: 0;
+                    pointer-events: none;
+                    position: absolute;
+                    right: 0;
+                    top: 0;
+                }
+
+                section[expandable] ::content [app-list-item]:not(.iron-selected),
+                section[selectable] ::content [app-list-item]:not(.iron-selected) {
+                    width:100%;
+                    margin-left:0;
+                }
+
+                section[expandable] ::content [app-list-item].iron-selected {
+                    @apply(--shadow-elevation-2dp);/* //TODO - set mixins */
+                    z-index: 2;
+                }
+
+            section header {
+                color: #616161;
+                display: flex;
+            }
+            section header ::content h5 {
+                display: inline-flex;
+                line-height: 40px;
+                flex: 1 0 auto;
+                margin: 0;
+                padding: 0 0.5rem;
+            }
+            section ::content [app-list-item] paper-item paper-item-body {
+                flex: 1 0 auto;
+            }
+            section ::content [app-list-item]:not(.iron-selected) paper-item:not(:hover) > paper-icon-button {
+                visibility: hidden;
+            }
+            section ::content [app-list-item]:not(.iron-selected) paper-item > paper-icon-button[icon='delete'] {
+                visibility: hidden;
+            }
+        </style>
+
+        <section expandable$="[[expandable]]" selectable$="[[selectable]]">
+            <header>
+                <content select="[list-title]"></content>
+                <content select="[list-button]"></content>
+            </header>
+            <content id="ironSelector" select="iron-selector"></content>
+        </section>
+    </template>
+    <script>
+        Polymer({
+            is: 'app-list',
+            properties: {
+                expandable: Boolean,
+                selectable: Boolean,
+                selector: Object,
+                selected: {
+                    type: Number,
+                    notify: true,
+                    computed: '_getSelected(selector.selected)'
+                },
+                selectedModel: {
+                    type: Object,
+                    notify: true,
+                    computed: '_getSelectedModel(selected)'
+                }
+            },
+            _getSelected: function(selector) {
+                return this.selector.selected;
+            },
+            _getSelectedModel: function(selected) {
+                return this.selector.querySelector('template').modelForElement(this.selector.selectedItem).get('item');
+            },
+            select: function (index) {
+                if (this.selectable)
+                    this.selector.select(index);
+            },
+            deselect: function () {
+                if (this.selectable)
+                    this.select();
+            },
+            expandSelected: function (evt) {
+                Polymer.dom(evt.detail.item).querySelector('iron-collapse').toggle();
+            },
+            attached: function () {
+                if (this.selectable) {
+                    this.set('selector', this.getContentChildren('#ironSelector')[0]);
+
+                    if (this.expandable) {
+                        this.selector.addEventListener('iron-select', this.expandSelected);
+                        this.selector.addEventListener('iron-deselect', this.expandSelected);
+                    }
+                }
+            }
+        });
+    </script>
+</dom-module>
